@@ -1,0 +1,4 @@
+(library
+ (name tdpocaml)
+ (libraries tyxml)
+ (flags (:standard -warn-error "-unused-value-declaration")))
