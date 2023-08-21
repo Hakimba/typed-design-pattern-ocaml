@@ -3,10 +3,16 @@ module Peano = struct
   type 'n succ = S of 'n
 end
 
+
 module IdList = struct
-  type ('a, _) t =
-    | [] : ('a, Peano.zero) t
-    | ( :: ) : 'a * ('a, 'n) t -> ('a, 'n Peano.succ) t
+  type _ element =
+    | Str : string -> string element
+    | Num : int -> int element
+  
+  type (_, _) t =
+    | [] : (_, Peano.zero) t
+    | ( :: ) : _ element * (_ element, 'n) t -> (_ element, 'n Peano.succ) t
+
 end
 
 module FList = struct
@@ -21,9 +27,13 @@ module FList = struct
 end
 
 let mprintf fmt args =
-  let rec aux : type n. n FList.t * (string, n) IdList.t -> _ = function
+  let rec aux : type n a. n FList.t * (a IdList.element, n) IdList.t -> _ = function
     | FList.[], IdList.[] -> ""
     | FList.Literal (x, xs), args -> x ^ aux (xs, args)
-    | FList.Hole xs, IdList.(x :: args) -> x ^ aux (xs, args)
+    | FList.Hole xs, IdList.(x :: args) ->
+      match x with
+      | Str v -> v ^ aux (xs, args)
+      | Num n -> (string_of_int n) ^ aux (xs, args)
+
   in
   aux (fmt, args)

@@ -1,10 +1,10 @@
 (* Admin design pattern *)
 
-let main_admin () =
+let _main_admin () =
   let open Tdpocaml in
   Admin.main ()
 
-let main_state_m () =
+let _main_state_m () =
   let open Tdpocaml.State_machine in
   let data = open_file "dune-project" in
   let rec loop d =
@@ -26,8 +26,9 @@ let main_state_m () =
 
 let main_formatter () =
   let open Tdpocaml.Formatter in
-  let tpl = FList.("Name : " ^ hole ^^ " Hobby : " ^ hole ^^ []) in
-  let args = IdList.["hakim";"eating"] in
+  let tpl = FList.("Name : " ^ hole ^^ " Hobby : " ^ hole ^^ " age : " ^ hole ^^ []) in
+  (*Le truc relou : on est obligé d'écrire les constructeurs, on peut pas direct faire ["hakim";6] *)
+  let args = IdList.[Str "hakim";Str "eating";Num 6] in
   print_endline (mprintf tpl args)
   (*
      Doesn't compile
@@ -43,6 +44,6 @@ let main_formatter () =
   *)
 
 let _ = 
-  let _ = main_admin () in
-  let _ = main_state_m () in
+  (*let _ = main_admin () in
+  let _ = main_state_m () in*)
   let _ = main_formatter () in ()
