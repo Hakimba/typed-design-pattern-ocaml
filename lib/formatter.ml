@@ -4,33 +4,29 @@ module Peano = struct
 end
 
 module IdList = struct
-  type ('a, _) t =
+  type (_, _) t =
     | [] : (_,Peano.zero) t
-    | ( :: ) : 'a * ('a, 'n) t -> ('a, 'n Peano.succ) t
+    | ( :: ) : 'a * (_, 'n) t -> (_, 'n Peano.succ) t
 end
 
 module FList = struct
   type _ t =
     | [] : Peano.zero t
     | Literal : string * 'n t -> 'n t
-    | Hole : 'n t -> 'n Peano.succ t
+    | Hole : ('a -> string) * 'n t -> 'n Peano.succ t
 
   let ( ^ ) str fmt = Literal (str, fmt)
-  let hole fmt = Hole fmt
+  let string fmt = Hole ((fun x -> x),fmt)
+  let int fmt = Hole (string_of_int,fmt)
+  let bool fmt = Hole (string_of_bool, fmt)
   let ( ^^ ) f x = f x
 end
 
-module Printable = struct
-  type t = P : ('a * ('a -> string)) -> t
-  let pack e f = P (e,f)
-  let unpack (P(e,to_string)) = to_string e
-end
-
 let mprintf fmt args =
-  let rec aux : type n. n FList.t * (Printable.t, n) IdList.t -> _ = function
+  let rec aux : type n a. n FList.t * (a, n) IdList.t -> _ = function
     | FList.[], IdList.[] -> ""
     | FList.Literal (x, xs), args -> x ^ aux (xs, args)
-    | FList.Hole xs, IdList.(x :: args) ->(Printable.unpack x) ^ aux (xs, args)
+    | FList.Hole (to_string,xs), IdList.(x :: args) -> (to_string x) ^ aux (xs, args)
 
   in
   aux (fmt, args)
