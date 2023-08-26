@@ -26,9 +26,11 @@ let _main_state_m () =
 
 let main_formatter () =
   let open Tdpocaml.Formatter in
-  let tpl = FList.("Name : " ^ hole ^^ " Hobby : " ^ hole ^^ " age : " ^ hole ^^ []) in
-  (*Le truc relou : on est obligé d'écrire les constructeurs, on peut pas direct faire ["hakim";6] *)
-  let args = IdList.[Str "hakim";Str "eating";Num 6] in
+  let tpl = FList.("Name : " ^ hole ^^ " age : " ^ hole ^^ " admin : " ^ hole ^^ []) in
+
+  let open Printable in
+  let id x = x in
+  let args = IdList.[pack "hakim" id; pack 28 string_of_int; pack true string_of_bool] in
   print_endline (mprintf tpl args)
   (*
      Doesn't compile
